@@ -1,0 +1,3 @@
+[submodule "Text2Human"]
+	path = Text2Human
+	url = https://github.com/yumingj/Text2Human

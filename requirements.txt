@@ -1,0 +1,11 @@
+einops==0.4.1
+lpips==0.1.4
+mmcv-full==1.5.2
+mmsegmentation==0.24.1
+numpy==1.22.3
+Pillow==9.1.1
+sentence-transformers==2.2.0
+tokenizers==0.12.1
+torch==1.11.0
+torchvision==0.12.0
+transformers==4.19.2

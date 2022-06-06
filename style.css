@@ -1,0 +1,12 @@
+h1 {
+  text-align: center;
+}
+#input-image {
+  max-height: 300px;
+}
+#label-image {
+  height: 300px;
+}
+#result-image {
+  height: 300px;
+}

@@ -41,22 +41,7 @@ def main():
     args = parse_args()
     model = Model(args.device)
 
-    css = '''
-h1#title {
-  text-align: center;
-}
-#input-image  {
-  max-height: 300px;
-}
-#label-image {
-  height: 300px;
-}
-#result-image {
-  height: 300px;
-}
-'''
-
-    with gr.Blocks(theme=args.theme, css=css) as demo:
+    with gr.Blocks(theme=args.theme, css='style.css') as demo:
         gr.Markdown('''<h1 id="title">Text2Human</h1>
 
 This is an unofficial demo for <a href="https://github.com/yumingj/Text2Human">https://github.com/yumingj/Text2Human</a>.

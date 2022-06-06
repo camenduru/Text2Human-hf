@@ -60,6 +60,7 @@ h1#title {
         gr.Markdown('''<h1 id="title">Text2Human</h1>
 
 This is an unofficial demo for <a href="https://github.com/yumingj/Text2Human">https://github.com/yumingj/Text2Human</a>.
+You can modify sample steps and seeds. By varying seeds, you can sample different human images under the same pose, shape description, and texture description. The larger the sample steps, the better quality of the generated images. (The default value of sample steps is 256 in the original repo.)</a>
 ''')
         with gr.Row():
             with gr.Column():

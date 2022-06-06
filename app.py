@@ -57,6 +57,7 @@ def main():
                     input_image = gr.Image(label='Input Pose Image',
                                            type='pil',
                                            elem_id='input-image')
+                    pose_data = gr.Variable()
                 with gr.Row():
                     paths = sorted(pathlib.Path('pose_images').glob('*.png'))
                     example_images = gr.Dataset(components=[input_image],
@@ -112,18 +113,22 @@ Note: Currently, only 5 types of textures are supported, i.e., pure color, strip
         gr.Markdown(FOOTER)
 
         input_image.change(fn=model.process_pose_image,
-                           inputs=[input_image],
-                           outputs=None)
+                           inputs=input_image,
+                           outputs=pose_data)
         generate_label_button.click(fn=model.generate_label_image,
-                                    inputs=[shape_text],
-                                    outputs=[label_image])
+                                    inputs=[
+                                        pose_data,
+                                        shape_text,
+                                    ],
+                                    outputs=label_image)
         generate_human_button.click(fn=model.generate_human,
                                     inputs=[
+                                        label_image,
                                         texture_text,
                                         sample_steps,
                                         seed,
                                     ],
-                                    outputs=[result])
+                                    outputs=result)
         example_images.click(fn=set_example_image,
                              inputs=example_images,
                              outputs=example_images.components)

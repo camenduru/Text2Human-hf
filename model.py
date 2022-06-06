@@ -98,29 +98,32 @@ class Model:
         result = np.asarray(result[0, :, :, :], dtype=np.uint8)
         return result
 
-    def process_pose_image(self, pose_image: PIL.Image.Image) -> None:
+    def process_pose_image(self, pose_image: PIL.Image.Image) -> torch.Tensor:
         if pose_image is None:
             return
         data = self.preprocess_pose_image(pose_image)
         self.model.feed_pose_data(data)
+        return data
 
-    def generate_label_image(self, shape_text: str) -> np.ndarray:
+    def generate_label_image(self, pose_data: torch.Tensor,
+                             shape_text: str) -> np.ndarray:
+        self.model.feed_pose_data(pose_data)
         shape_attributes = generate_shape_attributes(shape_text)
         shape_attributes = torch.LongTensor(shape_attributes).unsqueeze(0)
         self.model.feed_shape_attributes(shape_attributes)
         self.model.generate_parsing_map()
         self.model.generate_quantized_segm()
         colored_segm = self.model.palette_result(self.model.segm[0].cpu())
+        return colored_segm
 
-        mask = colored_segm.copy()
+    def generate_human(self, label_image: np.ndarray, texture_text: str,
+                       sample_steps: int, seed: int) -> np.ndarray:
+        mask = label_image.copy()
         seg_map = self.process_mask(mask)
         self.model.segm = torch.from_numpy(seg_map).unsqueeze(0).unsqueeze(
             0).to(self.model.device)
         self.model.generate_quantized_segm()
-        return colored_segm
 
-    def generate_human(self, texture_text: str, sample_steps: int,
-                       seed: int) -> np.ndarray:
         set_random_seed(seed)
 
         texture_attributes = generate_texture_attributes(texture_text)

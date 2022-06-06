@@ -52,6 +52,7 @@ class Model:
         self.config['device'] = device
         self._download_models()
         self.model = SampleFromPoseModel(self.config)
+        self.model.batch_size = 1
 
     def _load_config(self) -> dict:
         path = 'Text2Human/configs/sample_from_pose.yml'
@@ -84,10 +85,13 @@ class Model:
 
     @staticmethod
     def process_mask(mask: torch.Tensor) -> torch.Tensor:
+        if mask.shape != (512, 256, 3):
+            return None
         seg_map = np.full(mask.shape[:-1], -1)
         for index, color in enumerate(COLOR_LIST):
             seg_map[np.sum(mask == color, axis=2) == 3] = index
-        assert (seg_map != -1).all()
+        if not (seg_map != -1).all():
+            return None
         return seg_map
 
     @staticmethod
@@ -124,6 +128,8 @@ class Model:
             return
         mask = label_image.copy()
         seg_map = self.process_mask(mask)
+        if seg_map is None:
+            return
         self.model.segm = torch.from_numpy(seg_map).unsqueeze(0).unsqueeze(
             0).to(self.model.device)
         self.model.generate_quantized_segm()

@@ -20,6 +20,8 @@ DESCRIPTION = '''# Text2Human
 
 This is an unofficial demo for <a href="https://github.com/yumingj/Text2Human">https://github.com/yumingj/Text2Human</a>.
 You can modify sample steps and seeds. By varying seeds, you can sample different human images under the same pose, shape description, and texture description. The larger the sample steps, the better quality of the generated images. (The default value of sample steps is 256 in the original repo.)
+
+Label image generation step can be skipped. However, in that case, the input label image must be 512x256 in size and must contain only the specified colors.
 '''
 FOOTER = '<img id="visitor-badge" alt="visitor badge" src="https://visitor-badge.glitch.me/badge?page_id=hysts.text2human" />'
 
@@ -68,8 +70,7 @@ def main():
                 with gr.Row():
                     label_image = gr.Image(label='Label Image',
                                            type='numpy',
-                                           elem_id='label-image',
-                                           interactive=False)
+                                           elem_id='label-image')
                 with gr.Row():
                     shape_text = gr.Textbox(
                         label='Shape Description',

@@ -107,6 +107,8 @@ class Model:
 
     def generate_label_image(self, pose_data: torch.Tensor,
                              shape_text: str) -> np.ndarray:
+        if pose_data is None:
+            return
         self.model.feed_pose_data(pose_data)
         shape_attributes = generate_shape_attributes(shape_text)
         shape_attributes = torch.LongTensor(shape_attributes).unsqueeze(0)
@@ -118,6 +120,8 @@ class Model:
 
     def generate_human(self, label_image: np.ndarray, texture_text: str,
                        sample_steps: int, seed: int) -> np.ndarray:
+        if label_image is None:
+            return
         mask = label_image.copy()
         seg_map = self.process_mask(mask)
         self.model.segm = torch.from_numpy(seg_map).unsqueeze(0).unsqueeze(

@@ -16,6 +16,13 @@ if os.getenv('SYSTEM') == 'spaces':
 
 from model import Model
 
+DESCRIPTION = '''# Text2Human
+
+This is an unofficial demo for <a href="https://github.com/yumingj/Text2Human">https://github.com/yumingj/Text2Human</a>.
+You can modify sample steps and seeds. By varying seeds, you can sample different human images under the same pose, shape description, and texture description. The larger the sample steps, the better quality of the generated images. (The default value of sample steps is 256 in the original repo.)
+'''
+FOOTER = '<img id="visitor-badge" alt="visitor badge" src="https://visitor-badge.glitch.me/badge?page_id=hysts.text2human" />'
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
@@ -42,11 +49,8 @@ def main():
     model = Model(args.device)
 
     with gr.Blocks(theme=args.theme, css='style.css') as demo:
-        gr.Markdown('''<h1 id="title">Text2Human</h1>
+        gr.Markdown(DESCRIPTION)
 
-This is an unofficial demo for <a href="https://github.com/yumingj/Text2Human">https://github.com/yumingj/Text2Human</a>.
-You can modify sample steps and seeds. By varying seeds, you can sample different human images under the same pose, shape description, and texture description. The larger the sample steps, the better quality of the generated images. (The default value of sample steps is 256 in the original repo.)</a>
-''')
         with gr.Row():
             with gr.Column():
                 with gr.Row():
@@ -105,9 +109,7 @@ Note: Currently, only 5 types of textures are supported, i.e., pure color, strip
                 with gr.Row():
                     generate_human_button = gr.Button('Generate Human')
 
-        gr.Markdown(
-            '<center><img src="https://visitor-badge.glitch.me/badge?page_id=hysts.text2human" alt="visitor badge"/></center>'
-        )
+        gr.Markdown(FOOTER)
 
         input_image.change(fn=model.process_pose_image,
                            inputs=[input_image],

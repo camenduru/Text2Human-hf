@@ -10,3 +10,7 @@ h1 {
 #result-image {
   height: 300px;
 }
+img#visitor-badge {
+  display: block;
+  margin: auto;
+}

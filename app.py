@@ -68,7 +68,8 @@ def main():
                 with gr.Row():
                     label_image = gr.Image(label='Label Image',
                                            type='numpy',
-                                           elem_id='label-image')
+                                           elem_id='label-image',
+                                           interactive=False)
                 with gr.Row():
                     shape_text = gr.Textbox(
                         label='Shape Description',

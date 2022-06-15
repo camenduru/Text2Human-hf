@@ -10,9 +10,9 @@ import subprocess
 import gradio as gr
 
 if os.getenv('SYSTEM') == 'spaces':
-    subprocess.call('pip uninstall -y mmcv-full'.split())
-    subprocess.call('pip install mmcv-full==1.5.2'.split())
-    subprocess.call('git apply ../patch'.split(), cwd='Text2Human')
+    subprocess.run('pip uninstall -y mmcv-full'.split())
+    subprocess.run('pip install mmcv-full==1.5.2'.split())
+    subprocess.run('git apply ../patch'.split(), cwd='Text2Human')
 
 from model import Model
 

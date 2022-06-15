@@ -66,11 +66,6 @@ def main():
                                                 samples=[[path.as_posix()]
                                                          for path in paths])
 
-            with gr.Column():
-                with gr.Row():
-                    label_image = gr.Image(label='Label Image',
-                                           type='numpy',
-                                           elem_id='label-image')
                 with gr.Row():
                     shape_text = gr.Textbox(
                         label='Shape Description',
@@ -87,9 +82,10 @@ Note: The outer clothing type and accessories can be omitted.''')
 
             with gr.Column():
                 with gr.Row():
-                    result = gr.Image(label='Result',
-                                      type='numpy',
-                                      elem_id='result-image')
+                    label_image = gr.Image(label='Label Image',
+                                           type='numpy',
+                                           elem_id='label-image')
+
                 with gr.Row():
                     texture_text = gr.Textbox(
                         label='Texture Description',
@@ -111,6 +107,12 @@ Note: Currently, only 5 types of textures are supported, i.e., pure color, strip
                     seed = gr.Slider(0, 1000000, value=0, step=1, label='Seed')
                 with gr.Row():
                     generate_human_button = gr.Button('Generate Human')
+
+            with gr.Column():
+                with gr.Row():
+                    result = gr.Image(label='Result',
+                                      type='numpy',
+                                      elem_id='result-image')
 
         gr.Markdown(FOOTER)
 

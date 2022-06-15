@@ -10,8 +10,11 @@ import subprocess
 import gradio as gr
 
 if os.getenv('SYSTEM') == 'spaces':
-    subprocess.run('pip uninstall -y mmcv-full'.split())
-    subprocess.run('pip install mmcv-full==1.5.2'.split())
+    import mim
+
+    mim.uninstall('mmcv-full', confirm_yes=True)
+    mim.install('mmcv-full==1.5.2', is_yes=True)
+
     with open('patch') as f:
         subprocess.run('patch -p1'.split(), cwd='Text2Human', stdin=f)
 

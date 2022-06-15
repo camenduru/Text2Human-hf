@@ -84,7 +84,7 @@ class Model:
         return data
 
     @staticmethod
-    def process_mask(mask: torch.Tensor) -> torch.Tensor:
+    def process_mask(mask: np.ndarray) -> np.ndarray:
         if mask.shape != (512, 256, 3):
             return None
         seg_map = np.full(mask.shape[:-1], -1)

@@ -65,8 +65,8 @@ class Model:
         if model_dir.exists():
             return
         token = os.getenv('HF_TOKEN')
-        path = huggingface_hub.hf_hub_download('hysts/Text2Human',
-                                               'orig/pretrained_models.zip',
+        path = huggingface_hub.hf_hub_download('yumingj/Text2Human_SSHQ',
+                                               'pretrained_models.zip',
                                                use_auth_token=token)
         model_dir.mkdir()
         with zipfile.ZipFile(path) as f:

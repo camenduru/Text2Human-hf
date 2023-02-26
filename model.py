@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import pathlib
 import sys
 import zipfile
@@ -47,9 +46,10 @@ COLOR_LIST = [
 
 
 class Model:
-    def __init__(self, device: str):
+    def __init__(self):
+        device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
         self.config = self._load_config()
-        self.config['device'] = device
+        self.config['device'] = device.type
         self._download_models()
         self.model = SampleFromPoseModel(self.config)
         self.model.batch_size = 1

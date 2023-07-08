@@ -20,22 +20,12 @@ if os.getenv('SYSTEM') == 'spaces':
 
 from model import Model
 
-DESCRIPTION = '''# Text2Human
+DESCRIPTION = '''# [Text2Human](https://github.com/yumingj/Text2Human)
 
-This is an unofficial demo for <a href="https://github.com/yumingj/Text2Human">https://github.com/yumingj/Text2Human</a>.
 You can modify sample steps and seeds. By varying seeds, you can sample different human images under the same pose, shape description, and texture description. The larger the sample steps, the better quality of the generated images. (The default value of sample steps is 256 in the original repo.)
 
 Label image generation step can be skipped. However, in that case, the input label image must be 512x256 in size and must contain only the specified colors.
 '''
-
-
-def set_example_image(example: list) -> dict:
-    return gr.update(value=example[0])
-
-
-def set_example_text(example: list) -> dict:
-    return gr.update(value=example[0])
-
 
 model = Model()
 
@@ -51,9 +41,8 @@ with gr.Blocks(css='style.css') as demo:
                 pose_data = gr.State()
             with gr.Row():
                 paths = sorted(pathlib.Path('pose_images').glob('*.png'))
-                example_images = gr.Dataset(components=[input_image],
-                                            samples=[[path.as_posix()]
-                                                     for path in paths])
+                gr.Examples(examples=[[path.as_posix()] for path in paths],
+                            inputs=input_image)
 
             with gr.Row():
                 shape_text = gr.Textbox(
@@ -62,10 +51,10 @@ with gr.Blocks(css='style.css') as demo:
                     '''<gender>, <sleeve length>, <length of lower clothing>, <outer clothing type>, <other accessories1>, ...
 Note: The outer clothing type and accessories can be omitted.''')
             with gr.Row():
-                shape_example_texts = gr.Dataset(
-                    components=[shape_text],
-                    samples=[['man, sleeveless T-shirt, long pants'],
-                             ['woman, short-sleeve T-shirt, short jeans']])
+                gr.Examples(
+                    examples=[['man, sleeveless T-shirt, long pants'],
+                              ['woman, short-sleeve T-shirt, short jeans']],
+                    inputs=shape_text)
             with gr.Row():
                 generate_label_button = gr.Button('Generate Label Image')
 
@@ -83,19 +72,23 @@ Note: The outer clothing type and accessories can be omitted.''')
 Note: Currently, only 5 types of textures are supported, i.e., pure color, stripe/spline, plaid/lattice, floral, denim.'''
                 )
             with gr.Row():
-                texture_example_texts = gr.Dataset(components=[texture_text],
-                                                   samples=[
-                                                       ['pure color, denim'],
-                                                       ['floral, stripe'],
-                                                   ])
+                gr.Examples(examples=[
+                    ['pure color, denim'],
+                    ['floral, stripe'],
+                ],
+                            inputs=texture_text)
             with gr.Row():
                 sample_steps = gr.Slider(label='Sample Steps',
                                          minimum=10,
                                          maximum=300,
-                                         value=10,
-                                         step=10)
+                                         step=10,
+                                         value=10)
             with gr.Row():
-                seed = gr.Slider(0, 1000000, value=0, step=1, label='Seed')
+                seed = gr.Slider(label='Seed',
+                                 minimum=0,
+                                 maximum=1000000,
+                                 step=1,
+                                 value=0)
             with gr.Row():
                 generate_human_button = gr.Button('Generate Human')
 
@@ -122,17 +115,4 @@ Note: Currently, only 5 types of textures are supported, i.e., pure color, strip
                                     seed,
                                 ],
                                 outputs=result)
-    example_images.click(fn=set_example_image,
-                         inputs=example_images,
-                         outputs=example_images.components,
-                         queue=False)
-    shape_example_texts.click(fn=set_example_text,
-                              inputs=shape_example_texts,
-                              outputs=shape_example_texts.components,
-                              queue=False)
-    texture_example_texts.click(fn=set_example_text,
-                                inputs=texture_example_texts,
-                                outputs=texture_example_texts.components,
-                                queue=False)
-
-demo.queue().launch(show_api=False)
+demo.queue(max_size=10).launch()

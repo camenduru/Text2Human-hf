@@ -4,10 +4,12 @@ from __future__ import annotations
 
 import os
 import pathlib
+import random
 import shlex
 import subprocess
 
 import gradio as gr
+import numpy as np
 
 if os.getenv('SYSTEM') == 'spaces':
     import mim
@@ -26,6 +28,15 @@ You can modify sample steps and seeds. By varying seeds, you can sample differen
 
 Label image generation step can be skipped. However, in that case, the input label image must be 512x256 in size and must contain only the specified colors.
 '''
+
+MAX_SEED = np.iinfo(np.int32).max
+
+
+def randomize_seed_fn(seed: int, randomize_seed: bool) -> int:
+    if randomize_seed:
+        seed = random.randint(0, MAX_SEED)
+    return seed
+
 
 model = Model()
 
@@ -81,14 +92,16 @@ Note: Currently, only 5 types of textures are supported, i.e., pure color, strip
                 sample_steps = gr.Slider(label='Sample Steps',
                                          minimum=10,
                                          maximum=300,
-                                         step=10,
-                                         value=10)
+                                         step=1,
+                                         value=256)
             with gr.Row():
                 seed = gr.Slider(label='Seed',
                                  minimum=0,
-                                 maximum=1000000,
+                                 maximum=MAX_SEED,
                                  step=1,
                                  value=0)
+                randomize_seed = gr.Checkbox(label='Randomize seed',
+                                             value=True)
             with gr.Row():
                 generate_human_button = gr.Button('Generate Human')
 
@@ -98,21 +111,30 @@ Note: Currently, only 5 types of textures are supported, i.e., pure color, strip
                                   type='numpy',
                                   elem_id='result-image')
 
-    input_image.change(fn=model.process_pose_image,
-                       inputs=input_image,
-                       outputs=pose_data)
-    generate_label_button.click(fn=model.generate_label_image,
-                                inputs=[
-                                    pose_data,
-                                    shape_text,
-                                ],
-                                outputs=label_image)
-    generate_human_button.click(fn=model.generate_human,
-                                inputs=[
-                                    label_image,
-                                    texture_text,
-                                    sample_steps,
-                                    seed,
-                                ],
-                                outputs=result)
+    input_image.change(
+        fn=model.process_pose_image,
+        inputs=input_image,
+        outputs=pose_data,
+    )
+    generate_label_button.click(
+        fn=model.generate_label_image,
+        inputs=[
+            pose_data,
+            shape_text,
+        ],
+        outputs=label_image,
+    )
+    generate_human_button.click(fn=randomize_seed_fn,
+                                inputs=[seed, randomize_seed],
+                                outputs=seed,
+                                queue=False).then(
+                                    fn=model.generate_human,
+                                    inputs=[
+                                        label_image,
+                                        texture_text,
+                                        sample_steps,
+                                        seed,
+                                    ],
+                                    outputs=result,
+                                )
 demo.queue(max_size=10).launch()
